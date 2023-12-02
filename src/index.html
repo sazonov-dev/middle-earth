@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Средиземье</title>
+</head>
+<body class="body">
+<!--    <button class="startGame">НАЧАТЬ ИГРУ</button>-->
+
+    <form action="" class="gameSettings">
+        <h2 class="team-title">Команда 1</h2>
+        <label for="team-one" class="team-label">
+            Введите численность войск
+            <input type="number" id="team-one" class="team">
+        </label>
+        <h2 class="team-title">Команда 2</h2>
+        <label for="team-one" class="team-label">
+            Введите численность войск
+            <input type="number" id="team-two" class="team">
+        </label>
+        <button class="startGame" type="submit">НАЧАТЬ ИГРУ</button>
+    </form>
+
+    <div class="loader">
+        <img id="loader-img" src="<%=require('./assets/images/loader.gif')%>" alt="">
+        <span>Генерация мира...</span>
+    </div>
+
+    <div class="content">
+
+    </div>
+
+    <audio autoplay id="music">
+        <source src="<%=require('./assets/audio/cbb8fe124aaeb78.mp3')%>" type="audio/mp3">
+    </audio>
+</body>
+</html>
