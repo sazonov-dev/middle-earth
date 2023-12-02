@@ -2,9 +2,11 @@ import '../assets/styles/main.css';
 const startForm = document.querySelector('.gameSettings');
 const inputs = Array.from(document.querySelector('.gameSettings').querySelectorAll('.team'));
 const loader = document.querySelector('.loader');
+import {soldier, Team, Soldier} from './gameGeneration';
 
 let isPlaying = false;
 let audioPlayed = false;
+const teams = {};
 
 const load_screen_phrases = [
     "Генерация мира... Подготовь свое королевство к великим подвигам!",
@@ -30,14 +32,68 @@ const formHandler = (event) => {
     if (!status) {
         form.style.display = 'none';
         document.body.style.display = 'block';
+
+        inputs.forEach((input) => {
+            teams[input.id] = new Team(Number(input.value));
+        })
+
         loaderHandler();
     }
+}
+
+const teamBlacklistFilter = (team, soldier) => {
+    const soldierBlacklist = soldier.getThisSoldier().blacklist;
+    let black = false
+
+    for (let i = 0; i < soldierBlacklist; i ++) {
+        if (black === true) {
+            break;
+        }
+        if (team.includes(soldierBlacklist[i])) {
+            black = true;
+            break;
+        } else {
+            i++
+        }
+    }
+
+    return black;
+}
+
+const teamGenerate = () => {
+    for (let key in teams) {
+        while(teams[key].soldiers.length < teams[key].count) {
+            if (teams[key].soldiers.length === 0) {
+                teams[key].setSoldier(generateSoldiers());
+            } else {
+                const soldier = generateSoldiers()
+                if (!teamBlacklistFilter(teams[key].soldiers, soldier)) {
+                    teams[key].setSoldier(soldier);
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+    console.log(teams)
+}
+
+const randomSoldier = () => {
+    const soldiers = soldier.getSoldier();
+    const keys = Object.keys(soldiers);
+    return soldiers[keys[Math.floor(Math.random() * keys.length)]]
+}
+
+const generateSoldiers = () => {
+    const soldier = new Soldier(randomSoldier());
+    return soldier.getThisSoldier();
 }
 
 const loaderHandler = () => {
     const span = loader.querySelector('span');
     const phrases = [...load_screen_phrases];
     loader.style.display = 'flex';
+    teamGenerate();
 
     phrases.forEach((phrase, index) => {
         setTimeout(() => {
@@ -67,6 +123,8 @@ const startApp = () => {
     startForm.addEventListener('submit', formHandler)
 
     inputs.forEach((input) => input.addEventListener('input', () => playAudioOnFirstMove()));
+
+    console.log(soldier.getSoldier());
 }
 
 startApp();
