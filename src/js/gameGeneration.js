@@ -1,6 +1,6 @@
 export class Team {
-    constructor(count) {
-        this.name = null;
+    constructor(count, name) {
+        this.name = name;
         this.soldiers = [];
         this.count = count;
     }
@@ -21,7 +21,8 @@ export class Team {
 export class Soldier {
     constructor(props) {
         this.name = props && props.name ? props.name : null;
-        this.id = props && props.id ? props.id : null;
+        this.id = this.generateId();
+        this.type = props && props.type ? props.type : null;
         this.weapon = props && props.weapon ? props.weapon : null;
         this.vehicle = props && props.vehicle ? props.vehicle : null;
         this.hp = props && props.hp ? props.hp : null;
@@ -29,7 +30,7 @@ export class Soldier {
         this.accuracy = props && props.accuracy ? props.accuracy : null;
         this.speed = props && props.speed ? props.speed : null;
         this.damage = props && props.damage ? props.damage : null;
-        this.blacklist = props && props.blacklist ? props.blacklist : null;
+        this.blacklist = props && props.blackList ? props.blackList : null;
     }
 
     // пешие люди сильнее легкого орка, но медленнее его.
@@ -45,6 +46,8 @@ export class Soldier {
     getSoldier() {
         return {
             'human': {
+                'id': null,
+                'type': 'human',
                 'name': 'человек',
                 'weapon': 'секира',
                 'vehicle': null,
@@ -53,9 +56,11 @@ export class Soldier {
                 'accuracy': 5,
                 'speed': 5,
                 'damage': 5,
-                'blackList': ['orc, orc-high']
+                'blackList': ['orc', 'orc-high']
             },
             'human-horse': {
+                'id': null,
+                'type': 'human-horse',
                 'name': 'всадник',
                 'weapon': 'меч',
                 'vehicle': 'лошадь',
@@ -64,9 +69,11 @@ export class Soldier {
                 'accuracy': 5,
                 'speed': 7,
                 'damage': 7,
-                'blackList': ['orc, orc-high']
+                'blackList': ['orc', 'orc-high']
             },
             'human-witch': {
+                'id': null,
+                'type': 'human-witch',
                 'name': 'колдун',
                 'weapon': 'чары',
                 'vehicle': null,
@@ -78,6 +85,8 @@ export class Soldier {
                 'blackList': []
             },
             'orc': {
+                'id': null,
+                'type': 'orc',
                 'name': 'орк легкий',
                 'weapon': 'топор',
                 'vehicle': null,
@@ -86,9 +95,11 @@ export class Soldier {
                 'accuracy': 5,
                 'speed': 7,
                 'damage': 8,
-                'blackList': ['human', 'human-horse', 'elf']
+                'blackList': ['human', 'human-horse', 'elf', 'human-witch']
             },
             'orc-high': {
+                'id': null,
+                'type': 'orc-high',
                 'name': 'орк тяжелый',
                 'weapon': 'топор',
                 'vehicle': null,
@@ -97,9 +108,11 @@ export class Soldier {
                 'accuracy': 3,
                 'speed': 0,
                 'damage': 10,
-                'blackList': ['human', 'human-horse', 'elf']
+                'blackList': ['human', 'human-horse', 'elf', 'human-witch']
             },
             'elf': {
+                'id': null,
+                'type': 'elf',
                 'name': 'эльф',
                 'weapon': 'лук',
                 'vehicle': null,
@@ -108,13 +121,23 @@ export class Soldier {
                 'accuracy': 10,
                 'speed': 10,
                 'damage': 6,
-                'blackList': ['orc, orc-high']
+                'blackList': ['orc', 'orc-high']
             },
         }
     }
 
     getThisSoldier() {
         return this;
+    }
+
+    generateId() {
+        return Math.floor(Math.random() * 10000);
+    }
+
+    soldierAttack(attribute, value) {
+        console.log(Number(this[attribute]) - Number(value));
+        this[attribute] = Number(this[attribute]) - Number(value);
+        console.log(attribute, value, this.getThisSoldier())
     }
 
     log(action) {

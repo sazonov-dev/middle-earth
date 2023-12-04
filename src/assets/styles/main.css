@@ -23,7 +23,7 @@
 }
 
 .body {
-    background-image: url('../images/bg.gif');
+    background-image: url('../images/bg-game.gif');
     background-repeat: no-repeat;
     background-size: cover;
     width: 100%;
@@ -78,6 +78,58 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.content {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: none;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.content.active {
+    display: flex;
+}
+
+.content-text {
+    color: #ff8a4a;
+    word-wrap: break-word; /* Разрешаем перенос слов */
+    overflow-wrap: break-word; /* Дополнительное свойство для поддержки браузерами */
+    max-width: 100%; /* Ограничиваем ширину текста */
+    padding-bottom: 2px;
+    border-bottom: 1px dashed #ff8a4a;
+}
+
+.content-item {
+    text-align: center;
+}
+
+.content-team {
+    background-image: url('../images/list.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 360px;
+    height: 400px;
+    padding: 65px 70px 45px;
+    overflow: hidden;
+}
+
+.content-info {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    scrollbar-width: thin;  /* для Firefox */
+    scrollbar-color: transparent transparent;  /* для Firefox */
+}
+
+.content-info::-webkit-scrollbar {
+    width: 5px;  /* для WebKit (Chrome, Safari, Edge) */
+}
+
+.content-info::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
 
 #loader-img {
     width: 160px;
