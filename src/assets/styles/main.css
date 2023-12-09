@@ -34,7 +34,7 @@
     justify-content: center;
 }
 
-.startGame {
+.startGame, .startNewGame {
     margin-top: 20px;
     all: unset;
     cursor: pointer;
@@ -85,6 +85,7 @@
     display: none;
     justify-content: space-between;
     width: 100%;
+    padding: 10px;
 }
 
 .content.active {
@@ -135,6 +136,7 @@
     width: 160px;
 }
 
-.startGame:hover {
+.startGame:hover, .startNewGame:hover {
     border: 1px solid #fff;
 }
+

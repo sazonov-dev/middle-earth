@@ -139,10 +139,6 @@ export class Soldier {
         this[attribute] = Number(this[attribute]) - Number(value);
         console.log(attribute, value, this.getThisSoldier())
     }
-
-    log(action) {
-        return `${this.name} - ${action}`;
-    }
 }
 
 export const soldier = new Soldier();

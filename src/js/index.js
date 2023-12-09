@@ -1,10 +1,12 @@
 import '../assets/styles/main.css';
 const startForm = document.querySelector('.gameSettings');
 const inputs = Array.from(document.querySelector('.gameSettings').querySelectorAll('.team'));
+const startNewGameButton = document.querySelector('.startNewGame');
 const loader = document.querySelector('.loader');
 const content = document.querySelector('.content');
 const contentTeamInfo = document.querySelector('.content-team-info');
 const contentLogs = document.querySelector('.content-logs');
+const contentHistory = document.querySelector('.content-history');
 import {soldier, Team, Soldier} from './gameGeneration';
 
 let isPlaying = false;
@@ -38,6 +40,7 @@ const formHandler = (event) => {
 
         inputs.forEach((input) => {
             teams[input.id] = new Team(Number(input.value), input.id);
+            input.value = '';
         })
 
         loaderHandler();
@@ -72,32 +75,44 @@ const getRandomSoldier = (team) => {
     return soldiers[Math.floor(Math.random() * soldiers.length)]
 }
 
-const personHandler = (person, damage, team) => {
-    if (person.armor > 0) {
-        return person.soldierAttack('armor', damage);
+const personHandler = (defensePerson, attackPerson, teamDefense, teamAttack) => {
+    if (attackPerson.type === 'human-witch') {
+        teamDefense.removeSoldier(defensePerson);
+        return teamAttack.setSoldier(defensePerson);
     }
 
-    if (Number(damage) > 0 && person.hp > 0 && person.armor <= 0) {
-        return person.soldierAttack('hp', damage);
+    if (defensePerson.armor > 0) {
+        return defensePerson.soldierAttack('armor', attackPerson.damage);
     }
 
-    if (person.hp <= 0) {
-        return team.removeSoldier(person);
+    if (Number(attackPerson.damage) > 0 && defensePerson.hp > 0 && defensePerson.armor <= 0) {
+        return defensePerson.soldierAttack('hp', attackPerson.damage);
+    }
+
+    if (defensePerson.hp <= 0) {
+        return teamDefense.removeSoldier(defensePerson);
     }
 }
 
 const startGame = (team1 = null, team2 = null) => {
     const container = contentLogs.querySelector('.content-info');
+    const containerHistory = contentHistory.querySelector('.content-info');
 
     let teamAttack = team1 === null ? teams['team-one'] : team1;
     let teamDefense = team2 === null ? teams['team-two'] : team2;
 
     if (teamAttack.soldiers.length === 0) {
-        return `Победила команда ${teamDefense.name} с оставшимся кол-вом войск ${teamDefense.count}`;
+        const p = document.createElement('p');
+        p.classList.add('content-text');
+        p.textContent = `Победила команда ${teamDefense.name} с оставшимся кол-вом войск ${teamDefense.soldiers.length}`;
+        containerHistory.appendChild(p);
     }
 
     if (teamDefense.soldiers.length === 0) {
-        return `Победила команда ${teamAttack.name} с оставшимся кол-вом войск ${teamAttack.count}`;
+        const p = document.createElement('p');
+        p.classList.add('content-text');
+        p.textContent = `Победила команда ${teamAttack.name} с оставшимся кол-вом войск ${teamAttack.soldiers.length}`;;
+        containerHistory.appendChild(p);
     }
 
     const attackPerson = getRandomSoldier(teamAttack);
@@ -110,22 +125,36 @@ const startGame = (team1 = null, team2 = null) => {
 
         container.appendChild(p);
 
-        personHandler(defensePerson, attackPerson.damage, teamDefense);
+        personHandler(defensePerson, attackPerson, teamDefense, teamAttack);
         console.log(teams);
 
         setTimeout(() => {
             startGame(teamDefense, teamAttack);
-        }, 5000)
+        }, 500)
     }
+}
+
+const clearHistory = () => {
+    const data = contentTeamInfo.querySelector('.content-info').querySelectorAll('.content-text');
+    const dataLogs = contentLogs.querySelector('.content-info').querySelectorAll('.content-text');
+    data.forEach((element) => {
+        contentTeamInfo.querySelector('.content-info').removeChild(element)
+    });
+    dataLogs.forEach((element) => {
+        contentLogs.querySelector('.content-info').removeChild(element);
+    })
+    const content = document.querySelector('.content');
+    content.classList.remove('active');
+    startForm.style.display = 'flex';
+}
+
+const startNewGame = () => {
+    clearHistory();
 }
 
 const teamBlacklistFilter = (team, soldier) => {
     for (let i = 0; i < team.length; i++) {
-        if (soldier.blacklist.includes(team[i].type)) {
-            return true;
-        } else {
-            return false;
-        }
+        return soldier.blacklist.includes(team[i].type);
     }
 }
 
@@ -169,9 +198,9 @@ const loaderHandler = () => {
             loader.style.display = 'none'; // Или другой способ скрытия лоадера
             content.classList.add('active');
             document.body.style.display = 'flex';
+            contentTeamGenerate(teams);
+            startGame();
         }, 5000); // Задержка перед скрытием лоадера после завершения цикла (в данном случае 2000 мс или 2 секунды)
-        contentTeamGenerate(teams);
-        startGame();
     }
 }
 
@@ -185,10 +214,12 @@ const playAudioOnFirstMove = () => {
     }
 }
 
+
 const startApp = () => {
     startForm.addEventListener('submit', formHandler)
 
     inputs.forEach((input) => input.addEventListener('input', () => playAudioOnFirstMove()));
+    startNewGameButton.addEventListener('click', startNewGame);
 
     console.log(soldier.getSoldier());
 }
